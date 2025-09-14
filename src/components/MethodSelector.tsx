@@ -112,23 +112,6 @@ const MethodSelector = ({ currentLanguage, onSelectForm, onSelectVoice, onBack, 
                 </CardContent>
               </Card>
             </div>
-
-            {/* Quick Access Section */}
-            <div className="mt-16 text-center border-t border-gray-200 pt-12">
-              <div className="mb-6">
-                <h4 className="text-xl font-bold text-gray-900 mb-3">Quick Access</h4>
-                <p className="text-base text-gray-600">Recommended for users with limited digital experience</p>
-              </div>
-              <Button
-                onClick={onSelectVoice}
-                variant="voice"
-                size="lg"
-                className="h-16 px-10 text-lg rounded-2xl shadow-xl hover:shadow-2xl bg-gradient-to-r from-voice to-voice/90 hover:from-voice/90 hover:to-voice/80 text-white font-bold transition-all duration-300 transform hover:scale-105"
-              >
-                <Mic className="w-6 h-6 mr-4" />
-                {t.voiceRecommendation}
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
