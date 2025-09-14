@@ -130,7 +130,7 @@ export default function AIVoice({
         </div>
 
         {/* Wave Visualization */}
-        <div className="h-6 w-80 flex items-center justify-center gap-1 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div className="h-6 w-full md:w-80 flex items-center justify-center gap-1 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
           {[...Array(48)].map((_, i) => (
             <div
               key={i}

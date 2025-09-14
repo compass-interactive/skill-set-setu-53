@@ -266,12 +266,13 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
       variant={isSpeaking ? "default" : "outline"}
       size="sm"
       className={`
-        flex items-center gap-2 transition-all duration-200 ease-in-out
+        flex items-center gap-1.5 sm:gap-2 transition-all duration-200 ease-in-out
         ${isSpeaking 
           ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg scale-105 animate-pulse border-blue-600' 
           : 'border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 hover:shadow-md dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/20 dark:hover:border-blue-700'
         }
-        font-medium min-w-[140px] justify-center
+        font-medium min-w-[100px] sm:min-w-[140px] justify-center text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3
+        touch-manipulation
       `}
       aria-label={isSpeaking ? 
         ('stopListening' in t ? String(t.stopListening) : "Stop reading question") : 
@@ -281,17 +282,19 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
     >
       {isSpeaking ? (
         <>
-          <VolumeX className="w-4 h-4 animate-bounce" />
-          <span className="text-sm font-medium">
+          <VolumeX className="w-3 h-3 sm:w-4 sm:h-4 animate-bounce flex-shrink-0" />
+          <span className="font-medium hidden sm:inline">
             {'stopListening' in t ? String(t.stopListening) : 'Stop'}
           </span>
+          <span className="font-medium sm:hidden">Stop</span>
         </>
       ) : (
         <>
-          <Volume2 className="w-4 h-4" />
-          <span className="text-sm font-medium">
+          <Volume2 className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+          <span className="font-medium hidden sm:inline">
             {'listenToQuestion' in t ? String(t.listenToQuestion) : 'Listen to question'}
           </span>
+          <span className="font-medium sm:hidden">Listen</span>
         </>
       )}
     </Button>
@@ -314,7 +317,7 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
       onToggle={handleVoiceToggle}
       listenText={('stopRecording' in t ? String(t.stopRecording) : 'Recording your answer...')}
       clickText={`${t.answerWithVoice} for: "${currentQuestion.title}"`}
-      className="py-2"
+      className="py-1.5 sm:py-2"
     />
   );
 
@@ -363,12 +366,12 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
     switch (currentQuestion.type) {
       case 'text':
         return (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <Input
               value={value as string}
               onChange={(e) => handleInputChange(e.target.value)}
               placeholder={currentQuestion.subtitle}
-              className="h-14 text-lg"
+              className="h-12 sm:h-14 text-base sm:text-lg"
               autoFocus
             />
             <VoiceComponent />
@@ -381,12 +384,12 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
             value={value as string}
             onValueChange={handleInputChange}
           >
-            <SelectTrigger className="h-14 text-lg">
+            <SelectTrigger className="h-12 sm:h-14 text-base sm:text-lg">
               <SelectValue placeholder={t.selectOption} />
             </SelectTrigger>
             <SelectContent>
               {currentQuestion.options && Object.entries(currentQuestion.options).map(([key, label]) => (
-                <SelectItem key={key} value={key} className="text-lg py-3">
+                <SelectItem key={key} value={key} className="text-base sm:text-lg py-2 sm:py-3">
                   {label}
                 </SelectItem>
               ))}
@@ -396,25 +399,26 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
 
       case 'multiselect':
         return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {Array.isArray(currentQuestion.options) && currentQuestion.options.map((option: string) => (
                 <div
                   key={option}
-                  className={`flex items-center space-x-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                  className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border cursor-pointer transition-all touch-manipulation ${
                     (value as string[]).includes(option)
                       ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-primary/50'
+                      : 'border-border hover:border-primary/50 active:border-primary/70'
                   }`}
                   onClick={() => handleMultiSelect(option)}
                 >
                   <Checkbox
                     checked={(value as string[]).includes(option)}
                     onChange={() => handleMultiSelect(option)}
+                    className="flex-shrink-0"
                   />
-                  <span className="text-base font-medium">{option}</span>
+                  <span className="text-sm sm:text-base font-medium leading-tight flex-1">{option}</span>
                   {(value as string[]).includes(option) && (
-                    <CheckCircle className="w-5 h-5 text-primary ml-auto" />
+                    <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                   )}
                 </div>
               ))}
@@ -439,28 +443,30 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
         showHero={false}
       />
       
-      <div className="container mx-auto px-4 py-8 mt-16">
-        <div className="max-w-2xl mx-auto">
-          {/* Progress Section */}
-          <div className="mb-6">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
+      {/* Sticky Progress Section */}
+      <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50 shadow-sm">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
                 <span>{t.question} {currentStep + 1} {t.of} {totalSteps}</span>
                 <span>{Math.round(progress)}% {t.complete}</span>
               </div>
-              <Progress value={progress} className="h-2" />
+              <Progress value={progress} className="h-1.5 sm:h-2" />
             </div>
           </div>
         </div>
-
+      </div>
+      
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Question Card */}
         <Card className={`shadow-lg transition-all duration-300 ${
           isSpeaking ? 'ring-2 ring-blue-500 bg-blue-50/30 dark:bg-blue-900/10' : ''
         }`}>
-          <CardHeader className="pb-4">
-            <div className="flex items-start justify-between gap-4">
+          <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6 pt-4 sm:pt-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               <div className="flex-1">
-                <CardTitle className={`text-2xl text-primary mb-2 ${
+                <CardTitle className={`text-lg sm:text-xl md:text-2xl text-primary mb-2 leading-tight ${
                   isSpeaking ? 'text-blue-600 dark:text-blue-400' : ''
                 }`}>
                   {currentQuestion.title}
@@ -471,27 +477,29 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
                   )}
                 </CardTitle>
                 {currentQuestion.subtitle && (
-                  <p className={`text-muted-foreground text-lg ${
+                  <p className={`text-muted-foreground text-sm sm:text-base md:text-lg ${
                     isSpeaking ? 'text-blue-600/70 dark:text-blue-400/70' : ''
                   }`}>
                     {currentQuestion.subtitle}
                   </p>
                 )}
               </div>
-              <ListenButton />
+              <div className="flex justify-center sm:justify-end">
+                <ListenButton />
+              </div>
             </div>
           </CardHeader>
           
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-4 sm:pb-6">
             {renderQuestion()}
             
             {/* Navigation */}
-            <div className="flex justify-between pt-6">
+            <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 sm:gap-0 pt-4 sm:pt-6">
               <Button
                 onClick={handlePrevious}
                 variant="outline"
                 disabled={currentStep === 0}
-                className="flex items-center gap-2"
+                className="flex items-center justify-center gap-2 h-12 sm:h-10 text-base sm:text-sm"
               >
                 <ChevronLeft className="w-4 h-4" />
                 {t.previous}
@@ -500,7 +508,7 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid()}
-                className="flex items-center gap-2 min-w-[120px]"
+                className="flex items-center justify-center gap-2 min-w-[140px] sm:min-w-[120px] h-12 sm:h-10 text-base sm:text-sm font-semibold"
               >
                 {currentStep === totalSteps - 1 ? t.submit : t.next}
                 {currentStep < totalSteps - 1 && <ChevronRight className="w-4 h-4" />}
