@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PM Internship Scheme Design System - Rich Indian Theme
+All colors MUST be HSL for proper theming.
+*/
+
+@layer base {
+  :root {
+    /* Indian Flag Inspired Color Palette */
+    --background: 45 100% 98%;
+    --foreground: 210 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 15%;
+
+    /* Saffron Primary - Vibrant Indian Orange */
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 25 100% 65%;
+
+    /* Deep Indian Blue Secondary */
+    --secondary: 210 100% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Warm Muted Tones */
+    --muted: 35 20% 95%;
+    --muted-foreground: 210 15% 45%;
+
+    /* Indian Green Accent */
+    --accent: 140 80% 25%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 25% 88%;
+    --input: 35 25% 92%;
+    --ring: 25 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom Indian Theme Variables */
+    --voice-primary: 15 100% 55%;
+    --voice-glow: 15 100% 70%;
+    --success: 140 80% 35%;
+    
+    /* Beautiful Gradients */
+    --gradient-indian: linear-gradient(135deg, hsl(25 100% 50%), hsl(15 100% 55%), hsl(210 100% 25%));
+    --gradient-saffron: linear-gradient(135deg, hsl(25 100% 50%), hsl(25 100% 65%));
+    --gradient-voice: linear-gradient(135deg, hsl(15 100% 55%), hsl(15 100% 70%));
+    --gradient-subtle: linear-gradient(180deg, hsl(45 100% 98%), hsl(35 20% 95%));
+    
+    /* Elegant Shadows */
+    --shadow-indian: 0 10px 30px -10px hsl(25 100% 50% / 0.3);
+    --shadow-voice: 0 8px 25px -8px hsl(15 100% 55% / 0.4);
+    --shadow-card: 0 4px 20px -4px hsl(210 15% 15% / 0.1);
+    
+    /* Smooth Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 210 15% 8%;
+    --foreground: 45 100% 95%;
+
+    --card: 210 15% 10%;
+    --card-foreground: 45 100% 95%;
+
+    --popover: 210 15% 10%;
+    --popover-foreground: 45 100% 95%;
+
+    --primary: 25 100% 55%;
+    --primary-foreground: 210 15% 8%;
+    --primary-glow: 25 100% 70%;
+
+    --secondary: 210 100% 20%;
+    --secondary-foreground: 45 100% 95%;
+
+    --muted: 210 15% 12%;
+    --muted-foreground: 210 10% 65%;
+
+    --accent: 140 80% 30%;
+    --accent-foreground: 45 100% 95%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 45 100% 95%;
+
+    --border: 210 15% 20%;
+    --input: 210 15% 20%;
+    --ring: 25 100% 55%;
+    
+    --voice-primary: 15 100% 60%;
+    --voice-glow: 15 100% 75%;
+    --success: 140 80% 40%;
+
+    --sidebar-background: 210 15% 8%;
+    --sidebar-foreground: 210 10% 65%;
+    --sidebar-primary: 25 100% 55%;
+    --sidebar-primary-foreground: 210 15% 8%;
+    --sidebar-accent: 210 15% 15%;
+    --sidebar-accent-foreground: 210 10% 65%;
+    --sidebar-border: 210 15% 20%;
+    --sidebar-ring: 25 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Custom scrollbar for better UX */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.3);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
+}
+
+/* Custom animation classes for Indian theme */
+@layer utilities {
+  .gradient-indian {
+    background: var(--gradient-indian);
+  }
+  
+  .gradient-saffron {
+    background: var(--gradient-saffron);
+  }
+  
+  .gradient-voice {
+    background: var(--gradient-voice);
+  }
+  
+  .shadow-indian {
+    box-shadow: var(--shadow-indian);
+  }
+  
+  .shadow-voice {
+    box-shadow: var(--shadow-voice);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+  
+  /* Indian pattern animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+  }
+  
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px hsl(var(--primary) / 0.3); }
+    50% { box-shadow: 0 0 20px hsl(var(--primary) / 0.6); }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+}
