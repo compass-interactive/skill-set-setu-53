@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft, Globe } from "lucide-react";
 import heroBanner from "@/assets/hero-banner.jpg";
-import logo from "@/assets/logo.svg";
 
 interface HeaderProps {
   currentLanguage: string;
@@ -108,12 +107,12 @@ const Header = ({ currentLanguage, onLanguageChange, onBack, backLabel, showHero
                 </Button>
               ) : (
                 <>
-                  <div className="flex items-center space-x-3">
-                    <img src={logo} alt="PM Internship Scheme Logo" className="w-12 h-12 object-contain drop-shadow-lg" />
-                    <div className="hidden sm:block">
-                      <div className="text-sm font-semibold text-gray-900 dark:text-white">Government of India</div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">भारत सरकार</div>
-                    </div>
+                  <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary-glow rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-6 h-6 bg-white rounded-full"></div>
+                  </div>
+                  <div className="hidden sm:block">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-white">Government of India</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">भारत सरकार</div>
                   </div>
                 </>
               )}

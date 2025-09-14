@@ -193,6 +193,8 @@ export const getTranslations = (language: string) => {
         submit: "என் பரிந்துரைகளைப் பெறு",
         selectOption: "ஒரு விकல்பத்தைத் தேர்ந்தெடுக்கவும்",
         answerWithVoice: "குரலுடன் பதிலளிக்கவும்",
+        listenToQuestion: "கேள்வியைக் கேளுங்கள்",
+        stopListening: "நிறுத்து",
         questions: {
           name: {
             title: "உங்கள் பெயர் என்ன?",
@@ -277,6 +279,8 @@ export const getTranslations = (language: string) => {
         submit: "నా సిఫార్సులను పొందండి",
         selectOption: "ఒక ఎంపికను ఎంచుకోండి",
         answerWithVoice: "వాయిస్‌తో సమాధానం ఇవ్వండి",
+        listenToQuestion: "ప్రశ్నను వినండి",
+        stopListening: "ఆపండి",
         questions: {
           name: { title: "మీ పేరు ఏమిటి?", subtitle: "మీ పూర్తి పేరు నమోదు చేయండి" },
           education: {
@@ -324,7 +328,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "ಸೀಮಿತ ಡಿಜಿಟಲ್ ಅನುಭವ ಹೊಂದಿರುವ ಬಳಕೆದಾರರಿಗೆ ಅತ್ಯುತ್ತಮ ಆಯ್ಕೆ"
       },
       quizForm: {
-        back: "ಹಿಂತಿರುಗಿ", question: "ಪ್ರಶ್ನೆ", of: "ರ", complete: "ಪೂರ್ಣ", previous: "ಹಿಂದಿನ", next: "ಮುಂದಿನ", submit: "ನನ್ನ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ", selectOption: "ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ", answerWithVoice: "ಧ್ವನಿಯೊಂದಿಗೆ ಉತ್ತರಿಸಿ",
+        back: "ಹಿಂತಿರುಗಿ", question: "ಪ್ರಶ್ನೆ", of: "ರ", complete: "ಪೂರ್ಣ", previous: "ಹಿಂದಿನ", next: "ಮುಂದಿನ", submit: "ನನ್ನ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ", selectOption: "ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ", answerWithVoice: "ಧ್ವನಿಯೊಂದಿಗೆ ಉತ್ತರಿಸಿ", listenToQuestion: "ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಿ", stopListening: "ನಿಲ್ಲಿಸಿ",
         questions: {
           name: { title: "ನಿಮ್ಮ ಹೆಸರೇನು?", subtitle: "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರನ್ನು ನಮೂದಿಸಿ" },
           education: { title: "ನಿಮ್ಮ ಶಿಕ್ಷಣ ಮಟ್ಟ ಏನು?", subtitle: "ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಶಿಕ್ಷಣ ಸ್ಥಿತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ", options: { "12th": "12ನೇ ತರಗತಿ/ಉನ್ನತ ಮಾಧ್ಯಮಿಕ", "diploma": "ಡಿಪ್ಲೊಮಾ", "undergraduate": "ಪದವಿಪೂರ್ವ", "graduate": "ಪದವೀಧರ", "postgraduate": "ಸ್ನಾತಕೋತ್ತರ" } },
@@ -356,7 +360,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "പരിമിതമായ ഡിജിറ്റൽ അനുഭവമുള്ള ഉപയോക്താക്കൾക്കുള്ള മികച്ച ഓപ്ഷൻ"
       },
       quizForm: {
-        back: "മടങ്ങുക", question: "ചോദ്യം", of: "ന്റെ", complete: "പൂർത്തിയായി", previous: "മുമ്പത്തെ", next: "അടുത്തത്", submit: "എന്റെ ശുപാർശകൾ നേടുക", selectOption: "ഒരു ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക", answerWithVoice: "ശബ്ദത്തിലൂടെ ഉത്തരം നൽകുക",
+        back: "മടങ്ങുക", question: "ചോദ്യം", of: "ന്റെ", complete: "പൂർത്തിയായി", previous: "മുമ്പത്തെ", next: "അടുത്തത്", submit: "എന്റെ ശുപാർശകൾ നേടുക", selectOption: "ഒരു ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക", answerWithVoice: "ശബ്ദത്തിലൂടെ ഉത്തരം നൽകുക", listenToQuestion: "ചോദ്യം കേൾക്കുക", stopListening: "നിർത്തുക",
         questions: {
           name: { title: "നിങ്ങളുടെ പേരെന്താണ്?", subtitle: "നിങ്ങളുടെ പൂർണ്ണമായ പേര് നൽകുക" },
           education: { title: "നിങ്ങളുടെ വിദ്യാഭ്യാസ നില എന്താണ്?", subtitle: "നിങ്ങളുടെ നിലവിലെ വിദ്യാഭ്യാസ നില തിരഞ്ഞെടുക്കുക", options: { "12th": "12-ാം ക്ലാസ്/ഹയർ സെക്കൻഡറി", "diploma": "ഡിപ്ലോമ", "undergraduate": "ബിരുദം", "graduate": "ബിരുദധാരി", "postgraduate": "പിജി" } },
@@ -388,7 +392,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "সীমিত ডিজিটাল অভিজ্ঞতা সহ ব্যবহারকারীদের জন্য সেরা বিকল্প"
       },
       quizForm: {
-        back: "পিছনে", question: "প্রশ্ন", of: "এর", complete: "সম্পূর্ণ", previous: "পূর্ববর্তী", next: "পরবর্তী", submit: "আমার সুপারিশ পান", selectOption: "একটি বিকল্প নির্বাচন করুন", answerWithVoice: "ভয়েসের সাথে উত্তর দিন",
+        back: "পিছনে", question: "প্রশ্ন", of: "এর", complete: "সম্পূর্ণ", previous: "পূর্ববর্তী", next: "পরবর্তী", submit: "আমার সুপারিশ পান", selectOption: "একটি বিকল্প নির্বাচন করুন", answerWithVoice: "ভয়েসের সাথে উত্তর দিন", listenToQuestion: "প্রশ্ন শুনুন", stopListening: "বন্ধ করুন",
         questions: {
           name: { title: "আপনার নাম কি?", subtitle: "আপনার পূর্ণ নাম লিখুন" },
           education: { title: "আপনার শিক্ষার স্তর কি?", subtitle: "আপনার বর্তমান শিক্ষার অবস্থা নির্বাচন করুন", options: { "12th": "১২তম শ্রেণী/উচ্চ মাধ্যমিক", "diploma": "ডিপ্লোমা", "undergraduate": "স্নাতক", "graduate": "স্নাতক", "postgraduate": "স্নাতকোত্তর" } },
@@ -420,7 +424,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "मर्यादित डिजिटल अनुभव असलेल्या वापरकर्त्यांसाठी सर्वोत्तम पर्याय"
       },
       quizForm: {
-        back: "मागे", question: "प्रश्न", of: "चा", complete: "पूर्ण", previous: "मागील", next: "पुढील", submit: "माझ्या शिफारसी मिळवा", selectOption: "एक पर्याय निवडा", answerWithVoice: "आवाजासह उत्तर द्या",
+        back: "मागे", question: "प्रश्न", of: "चा", complete: "पूर्ण", previous: "मागील", next: "पुढील", submit: "माझ्या शिफारसी मिळवा", selectOption: "एक पर्याय निवडा", answerWithVoice: "आवाजासह उत्तर द्या", listenToQuestion: "प्रश्न ऐका", stopListening: "थांबवा",
         questions: {
           name: { title: "तुमचे नाव काय आहे?", subtitle: "तुमचे पूर्ण नाव प्रविष्ट करा" },
           education: { title: "तुमची शिक्षणाची पातळी काय आहे?", subtitle: "तुमची सध्याची शैक्षणिक स्थिती निवडा", options: { "12th": "१२वी इयत्ता/उच्च माध्यमिक", "diploma": "डिप्लोमा", "undergraduate": "पदवी", "graduate": "पदवीधर", "postgraduate": "पदव्युत्तर" } },
@@ -452,7 +456,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "મર્યાદિત ડિજિટલ અનુભવ ધરાવતા વપરાશકર્તાઓ માટે શ્રેષ્ઠ વિકલ્પ"
       },
       quizForm: {
-        back: "પાછળ", question: "પ્રશ્ન", of: "નો", complete: "પૂર્ણ", previous: "પહેલાનો", next: "આગળનો", submit: "મારી ભલામણો મેળવો", selectOption: "એક વિકલ્પ પસંદ કરો", answerWithVoice: "અવાજ સાથે જવાબ આપો",
+        back: "પાછળ", question: "પ્રશ્ન", of: "નો", complete: "પૂર્ણ", previous: "પહેલાનો", next: "આગળનો", submit: "મારી ભલામણો મેળવો", selectOption: "એક વિકલ્પ પસંદ કરો", answerWithVoice: "અવાજ સાથે જવાબ આપો", listenToQuestion: "પ્રશ્ન સાંભળો", stopListening: "બંધ કરો",
         questions: {
           name: { title: "તમારું નામ શું છે?", subtitle: "તમારું પૂરું નામ દાખલ કરો" },
           education: { title: "તમારા શિક્ષણનું સ્તર શું છે?", subtitle: "તમારી વર્તમાન શૈક્ષણિક સ્થિતિ પસંદ કરો", options: { "12th": "૧૨મો ધોરણ/ઉચ્ચ માધ્યમિક", "diploma": "ડિપ્લોમા", "undergraduate": "સ્નાતક", "graduate": "સ્નાતક", "postgraduate": "અનુસ્નાતક" } },
@@ -484,7 +488,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "ਸੀਮਤ ਡਿਜੀਟਲ ਤਜ਼ਰਬੇ ਵਾਲੇ ਉਪਭੋਗਤਾਵਾਂ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਵਿਕਲਪ"
       },
       quizForm: {
-        back: "ਪਿੱਛੇ", question: "ਸਵਾਲ", of: "ਦਾ", complete: "ਪੂਰਾ", previous: "ਪਿਛਲਾ", next: "ਅਗਲਾ", submit: "ਮੇਰੀਆਂ ਸਿਫਾਰਸ਼ਾਂ ਪ੍ਰਾਪਤ ਕਰੋ", selectOption: "ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ", answerWithVoice: "ਆਵਾਜ਼ ਨਾਲ ਜਵਾਬ ਦਿਓ",
+        back: "ਪਿੱਛੇ", question: "ਸਵਾਲ", of: "ਦਾ", complete: "ਪੂਰਾ", previous: "ਪਿਛਲਾ", next: "ਅਗਲਾ", submit: "ਮੇਰੀਆਂ ਸਿਫਾਰਸ਼ਾਂ ਪ੍ਰਾਪਤ ਕਰੋ", selectOption: "ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ", answerWithVoice: "ਆਵਾਜ਼ ਨਾਲ ਜਵਾਬ ਦਿਓ", listenToQuestion: "ਸਵਾਲ ਸੁਣੋ", stopListening: "ਰੁਕੋ",
         questions: {
           name: { title: "ਤੁਹਾਡਾ ਨਾਮ ਕੀ ਹੈ?", subtitle: "ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ" },
           education: { title: "ਤੁਹਾਡੀ ਸਿੱਖਿਆ ਦਾ ਪੱਧਰ ਕੀ ਹੈ?", subtitle: "ਆਪਣੀ ਮੌਜੂਦਾ ਸਿੱਖਿਆ ਸਥਿਤੀ ਚੁਣੋ", options: { "12th": "12ਵੀਂ ਜਮਾਤ/ਹਾਈ ਸੈਕੰਡਰੀ", "diploma": "ਡਿਪਲੋਮਾ", "undergraduate": "ਅੰਡਰ ਗਰੈਜੂਏਟ", "graduate": "ਗਰੈਜੂਏਟ", "postgraduate": "ਪੋਸਟ ਗਰੈਜੂਏਟ" } },
@@ -516,7 +520,7 @@ export const getTranslations = (language: string) => {
         voiceNote: "ସୀମିତ ଡିଜିଟାଲ୍ ଅଭିଜ୍ଞତା ଥିବା ଉପଯୋଗକର୍ତ୍ତାଙ୍କ ପାଇଁ ସର୍ବୋତ୍ତମ ବିକଳ୍ପ"
       },
       quizForm: {
-        back: "ପଛକୁ", question: "ପ୍ରଶ୍ନ", of: "ର", complete: "ସମ୍ପୂର୍ଣ୍ଣ", previous: "ପୂର୍ବ", next: "ପରବର୍ତ୍ତୀ", submit: "ମୋର ସୁପାରିସ ପାଆନ୍ତୁ", selectOption: "ଗୋଟିଏ ବିକଳ୍ପ ବାଛନ୍ତୁ", answerWithVoice: "ସ୍ୱର ସହିତ ଉତ୍ତର ଦିଅନ୍ତୁ",
+        back: "ପଛକୁ", question: "ପ୍ରଶ୍ନ", of: "ର", complete: "ସମ୍ପୂର୍ଣ୍ଣ", previous: "ପୂର୍ବ", next: "ପରବର୍ତ୍ତୀ", submit: "ମୋର ସୁପାରିସ ପାଆନ୍ତୁ", selectOption: "ଗୋଟିଏ ବିକଳ୍ପ ବାଛନ୍ତୁ", answerWithVoice: "ସ୍ୱର ସହିତ ଉତ୍ତର ଦିଅନ୍ତୁ", listenToQuestion: "ପ୍ରଶ୍ନ ଶୁଣନ୍ତୁ", stopListening: "ବନ୍ଦ କରନ୍ତୁ",
         questions: {
           name: { title: "ଆପଣଙ୍କ ନାମ କ'ଣ?", subtitle: "ଆପଣଙ୍କର ସମ୍ପୂର୍ଣ୍ଣ ନାମ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ" },
           education: { title: "ଆପଣଙ୍କର ଶିକ୍ଷାର ସ୍ତର କ'ଣ?", subtitle: "ଆପଣଙ୍କର ବର୍ତ୍ତମାନର ଶିକ୍ଷା ସ୍ଥିତି ବାଛନ୍ତୁ", options: { "12th": "୧ୂୟ ଶ୍ରେଣୀ/ଉଚ୍ଚ ମାଧ୍ୟମିକ", "diploma": "ଡିପ୍ଲୋମା", "undergraduate": "ସ୍ନାତକ", "graduate": "ସ୍ନାତକ", "postgraduate": "ସ୍ନାତକୋତ୍ତର" } },

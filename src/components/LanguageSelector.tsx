@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Globe, Languages } from "lucide-react";
+import { Globe } from "lucide-react";
 import indianBackground from "@/assets/indian-background.jpg";
+import logo from "@/assets/logo.svg";
 
 interface LanguageSelectorProps {
   onLanguageSelect: (language: string) => void;
@@ -35,10 +36,8 @@ const LanguageSelector = ({ onLanguageSelect }: LanguageSelectorProps) => {
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
       <Card className="max-w-4xl w-full shadow-xl border-0 bg-white/95 backdrop-blur relative z-10">
         <CardHeader className="text-center py-8 bg-gradient-to-r from-primary/5 to-accent/5">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
-              <Languages className="w-8 h-8 text-white" />
-            </div>
+          <div className="flex justify-center mb-6">
+            <img src={logo} alt="PM Internship Scheme Logo" className="w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-lg" />
           </div>
           <CardTitle className="text-3xl md:text-4xl text-primary mb-2">
             PM Internship Scheme

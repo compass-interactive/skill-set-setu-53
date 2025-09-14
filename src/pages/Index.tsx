@@ -10,10 +10,20 @@ import { getTranslations } from "@/lib/translations";
 
 type Screen = 'language' | 'method' | 'form' | 'voice' | 'recommendations';
 
+interface FormData {
+  name: string;
+  education: string;
+  field: string;
+  skills: string[];
+  interests: string[];
+  location: string;
+  duration: string;
+}
+
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('language');
   const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState<FormData | Record<string, unknown> | null>(null);
 
   const t = getTranslations(currentLanguage);
 
@@ -26,12 +36,12 @@ const Index = () => {
     setCurrentScreen(method);
   };
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: FormData) => {
     setFormData(data);
     setCurrentScreen('recommendations');
   };
 
-  const handleVoiceComplete = (data: any) => {
+  const handleVoiceComplete = (data: Record<string, unknown>) => {
     setFormData(data);
     setCurrentScreen('recommendations');
   };
@@ -61,6 +71,7 @@ const Index = () => {
           onSelectForm={() => handleMethodSelect('form')}
           onSelectVoice={() => handleMethodSelect('voice')}
           onBack={handleBackToLanguage}
+          onLanguageChange={setCurrentLanguage}
         />
       );
 
@@ -70,24 +81,18 @@ const Index = () => {
           currentLanguage={currentLanguage}
           onSubmit={handleFormSubmit}
           onBack={handleBackToMethod}
+          onLanguageChange={setCurrentLanguage}
         />
       );
 
     case 'voice':
       return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted p-4">
-          <div className="max-w-4xl mx-auto">
-            <VoiceConversation
-              currentLanguage={currentLanguage}
-              onComplete={handleVoiceComplete}
-            />
-            <div className="text-center mt-6">
-              <Button onClick={handleBackToMethod} variant="outline">
-                {t.voiceConversation.back}
-              </Button>
-            </div>
-          </div>
-        </div>
+        <VoiceConversation
+          currentLanguage={currentLanguage}
+          onComplete={handleVoiceComplete}
+          onBack={handleBackToMethod}
+          onLanguageChange={setCurrentLanguage}
+        />
       );
 
     case 'recommendations':

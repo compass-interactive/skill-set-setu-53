@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mic, MicOff, MessageCircle, Volume2 } from "lucide-react";
+import Header from "@/components/Header";
 
 interface VoiceConversationProps {
   currentLanguage: string;
-  onComplete: (data: any) => void;
+  onComplete: (data: Record<string, unknown>) => void;
+  onBack?: () => void;
+  onLanguageChange?: (language: string) => void;
 }
 
-const VoiceConversation = ({ currentLanguage, onComplete }: VoiceConversationProps) => {
+const VoiceConversation = ({ currentLanguage, onComplete, onBack, onLanguageChange }: VoiceConversationProps) => {
   const [isListening, setIsListening] = useState(false);
   const [conversation, setConversation] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -20,6 +23,7 @@ const VoiceConversation = ({ currentLanguage, onComplete }: VoiceConversationPro
       startListening: "Start Voice Conversation",
       stopListening: "Stop Listening",
       processing: "Processing...",
+      back: "Back to Methods",
       instructions: "Click the microphone button and tell us:",
       bulletPoints: [
         "Your name and education background",
@@ -37,6 +41,7 @@ const VoiceConversation = ({ currentLanguage, onComplete }: VoiceConversationPro
       startListening: "आवाज़ बातचीत शुरू करें",
       stopListening: "सुनना बंद करें", 
       processing: "प्रसंस्करण...",
+      back: "विधियों पर वापस जाएं",
       instructions: "माइक्रोफ़ोन बटन दबाएं और हमें बताएं:",
       bulletPoints: [
         "आपका नाम और शिक्षा पृष्ठभूमि",
@@ -101,7 +106,20 @@ const VoiceConversation = ({ currentLanguage, onComplete }: VoiceConversationPro
   };
 
   return (
-    <Card className="max-w-4xl mx-auto shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      {/* Header with fixed navigation and back button */}
+      {onBack && (
+        <Header 
+          currentLanguage={currentLanguage} 
+          onLanguageChange={onLanguageChange || (() => {})}
+          onBack={onBack}
+          backLabel={t.back}
+          showHero={false}
+        />
+      )}
+      
+      <div className="container mx-auto px-4 py-8" style={{ marginTop: onBack ? '4rem' : '0' }}>
+        <Card className="max-w-4xl mx-auto shadow-lg">
       <CardHeader className="bg-gradient-to-r from-voice/5 to-voice-glow/5 border-b">
         <CardTitle className="text-2xl text-voice flex items-center gap-2">
           <MessageCircle className="w-6 h-6" />
@@ -192,6 +210,8 @@ const VoiceConversation = ({ currentLanguage, onComplete }: VoiceConversationPro
         </div>
       </CardContent>
     </Card>
+      </div>
+    </div>
   );
 };
 
