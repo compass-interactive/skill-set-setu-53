@@ -1,14 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, CheckCircle, Volume2, VolumeX } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { getTranslations } from "@/lib/translations";
 import AIVoice from "@/components/ui/ai-voice";
 import Header from "@/components/Header";
+import { sarvamAPI } from "@/lib/sarvamApi";
 
 interface QuizFormProps {
   currentLanguage: string;
@@ -31,7 +32,9 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
   const [currentStep, setCurrentStep] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesis | null>(null);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+  const [currentAudioUrl, setCurrentAudioUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     education: '',
@@ -97,155 +100,98 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
 
   const currentQuestion = questions[currentStep];
 
-  // Initialize speech synthesis
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      setSpeechSynthesis(window.speechSynthesis);
-      
-      // Debug: Log available voices
-      const logVoices = () => {
-        const voices = window.speechSynthesis.getVoices();
-        console.log('Available voices:', voices.map(v => ({
-          name: v.name,
-          lang: v.lang,
-          default: v.default
-        })));
-      };
-      
-      // Wait for voices to load
-      if (window.speechSynthesis.getVoices().length === 0) {
-        window.speechSynthesis.addEventListener('voiceschanged', logVoices, { once: true });
-      } else {
-        logVoices();
-      }
-    }
-  }, []);
-
-  // Stop speech when component unmounts or step changes
+  // Clean up audio when component unmounts or step changes
   useEffect(() => {
     return () => {
-      if (speechSynthesis) {
-        speechSynthesis.cancel();
-        setIsSpeaking(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (currentAudioUrl) {
+        sarvamAPI.revokeAudioUrl(currentAudioUrl);
+        setCurrentAudioUrl(null);
+      }
+      setIsSpeaking(false);
+      setIsLoadingAudio(false);
+    };
+  }, [currentStep]);
+
+  // Clean up audio URL when it changes
+  useEffect(() => {
+    return () => {
+      if (currentAudioUrl) {
+        sarvamAPI.revokeAudioUrl(currentAudioUrl);
       }
     };
-  }, [speechSynthesis, currentStep]);
+  }, [currentAudioUrl]);
 
-  // Text-to-speech functions
-  const getLanguageCode = useCallback((lang: string) => {
-    // Primary language mappings with regional variants
-    const langMap: Record<string, string[]> = {
-      'en': ['en-US', 'en-GB', 'en-AU', 'en'],
-      'hi': ['hi-IN', 'hi'],
-      'ta': ['ta-IN', 'ta-LK', 'ta'],
-      'te': ['te-IN', 'te'],
-      'kn': ['kn-IN', 'kn'],
-      'ml': ['ml-IN', 'ml'],
-      'bn': ['bn-IN', 'bn-BD', 'bn'],
-      'mr': ['mr-IN', 'mr'],
-      'gu': ['gu-IN', 'gu'],
-      'pa': ['pa-IN', 'pa-PK', 'pa'],
-      'or': ['or-IN', 'or']
-    };
-    
-    const variants = langMap[lang] || ['en-US'];
-    return variants[0]; // Return the primary variant
-  }, []);
+  const speakQuestion = useCallback(async () => {
+    try {
+      if (isSpeaking && audioRef.current) {
+        // Stop current audio
+        audioRef.current.pause();
+        setIsSpeaking(false);
+        return;
+      }
 
-  const findBestVoice = useCallback((targetLang: string) => {
-    if (!speechSynthesis) return null;
-    
-    const voices = speechSynthesis.getVoices();
-    const langMap: Record<string, string[]> = {
-      'en': ['en-US', 'en-GB', 'en-AU', 'en'],
-      'hi': ['hi-IN', 'hi'],
-      'ta': ['ta-IN', 'ta-LK', 'ta'],
-      'te': ['te-IN', 'te'],
-      'kn': ['kn-IN', 'kn'],
-      'ml': ['ml-IN', 'ml'],
-      'bn': ['bn-IN', 'bn-BD', 'bn'],
-      'mr': ['mr-IN', 'mr'],
-      'gu': ['gu-IN', 'gu'],
-      'pa': ['pa-IN', 'pa-PK', 'pa'],
-      'or': ['or-IN', 'or']
-    };
-    
-    const possibleLangCodes = langMap[targetLang] || ['en-US'];
-    
-    // Try each language variant in order of preference
-    for (const langCode of possibleLangCodes) {
-      // Try exact match
-      let voice = voices.find(v => v.lang === langCode);
-      if (voice) return voice;
+      if (isLoadingAudio) {
+        return; // Prevent multiple simultaneous requests
+      }
+
+      setIsLoadingAudio(true);
+
+      // Prepare text to speak
+      const textToSpeak = `${currentQuestion.title}. ${currentQuestion.subtitle || ''}`;
+
+      // Get audio from Sarvam API
+      const base64Audio = await sarvamAPI.textToSpeech(textToSpeak, currentLanguage);
       
-      // Try case-insensitive match
-      voice = voices.find(v => v.lang.toLowerCase() === langCode.toLowerCase());
-      if (voice) return voice;
-    }
-    
-    // Try language base matching (e.g., 'hi' from 'hi-IN')
-    const languageBase = possibleLangCodes[0].split('-')[0];
-    let voice = voices.find(v => v.lang.toLowerCase().startsWith(languageBase.toLowerCase()));
-    if (voice) return voice;
-    
-    // Try partial matching
-    voice = voices.find(v => v.lang.toLowerCase().includes(languageBase.toLowerCase()));
-    if (voice) return voice;
-    
-    // Fallback to default system voice or first available
-    if (voices.length > 0) {
-      voice = voices.find(v => v.default) || voices[0];
-      console.warn(`No suitable voice found for language ${targetLang}, using fallback:`, voice?.name, voice?.lang);
-      return voice;
-    }
-    
-    return null;
-  }, [speechSynthesis]);
+      if (!base64Audio) {
+        throw new Error('No audio received from Sarvam API');
+      }
 
-  const speakQuestion = useCallback(() => {
-    if (!speechSynthesis) return;
+      // Clean up previous audio URL
+      if (currentAudioUrl) {
+        sarvamAPI.revokeAudioUrl(currentAudioUrl);
+      }
 
-    if (isSpeaking) {
-      // Stop current speech
-      speechSynthesis.cancel();
+      // Create new audio URL
+      const audioUrl = sarvamAPI.createAudioUrl(base64Audio);
+      setCurrentAudioUrl(audioUrl);
+
+      // Create and play audio
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      audio.onloadstart = () => {
+        setIsLoadingAudio(false);
+        setIsSpeaking(true);
+      };
+
+      audio.onended = () => {
+        setIsSpeaking(false);
+        setIsLoadingAudio(false);
+      };
+
+      audio.onerror = (error) => {
+        console.error('Audio playback error:', error);
+        setIsSpeaking(false);
+        setIsLoadingAudio(false);
+      };
+
+      await audio.play();
+
+    } catch (error) {
+      console.error('Error in speakQuestion:', error);
       setIsSpeaking(false);
-      return;
+      setIsLoadingAudio(false);
+      
+      // Show user-friendly error message
+      if (error instanceof Error && error.message.includes('API key')) {
+        console.warn('Sarvam API key not configured. Please add VITE_SARVAM_API_KEY to your environment variables.');
+      }
     }
-
-    // Create new speech
-    const textToSpeak = `${currentQuestion.title}. ${currentQuestion.subtitle || ''}`;
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    
-    // Set language and voice
-    const languageCode = getLanguageCode(currentLanguage);
-    const voice = findBestVoice(currentLanguage);
-    
-    utterance.lang = languageCode;
-    if (voice) {
-      utterance.voice = voice;
-    }
-    
-    utterance.rate = 0.8; // Slightly slower for better clarity
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    // Event listeners
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = (error) => {
-      console.warn('Speech synthesis error:', error);
-      setIsSpeaking(false);
-    };
-
-    // Ensure voices are loaded before speaking
-    if (speechSynthesis.getVoices().length === 0) {
-      speechSynthesis.addEventListener('voiceschanged', () => {
-        speechSynthesis.speak(utterance);
-      }, { once: true });
-    } else {
-      speechSynthesis.speak(utterance);
-    }
-  }, [speechSynthesis, isSpeaking, currentQuestion.title, currentQuestion.subtitle, currentLanguage, getLanguageCode, findBestVoice]);
+  }, [currentQuestion.title, currentQuestion.subtitle, currentLanguage, isSpeaking, isLoadingAudio, currentAudioUrl]);
 
   // Add keyboard shortcut for text-to-speech (Ctrl/Cmd + L)
   useEffect(() => {
@@ -263,29 +209,35 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
   const ListenButton = () => (
     <Button
       onClick={speakQuestion}
-      variant={isSpeaking ? "default" : "outline"}
+      variant={(isLoadingAudio || isSpeaking) ? "default" : "outline"}
       size="sm"
       className={`
         flex items-center gap-1.5 sm:gap-2 transition-all duration-200 ease-in-out
-        ${isSpeaking 
-          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg scale-105 animate-pulse border-blue-600' 
+        ${(isLoadingAudio || isSpeaking)
+          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg scale-105 border-blue-600' 
           : 'border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 hover:shadow-md dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/20 dark:hover:border-blue-700'
         }
+        ${isSpeaking ? 'animate-pulse' : ''}
         font-medium min-w-[100px] sm:min-w-[140px] justify-center text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3
         touch-manipulation
       `}
-      aria-label={isSpeaking ? 
-        ('stopListening' in t ? String(t.stopListening) : "Stop reading question") : 
+      aria-label={
+        isLoadingAudio ? "Loading audio..." : 
+        isSpeaking ? "Stop reading question" :
         ('listenToQuestion' in t ? String(t.listenToQuestion) : "Listen to question")
       }
-      disabled={!speechSynthesis}
+      disabled={isLoadingAudio}
     >
-      {isSpeaking ? (
+      {isLoadingAudio ? (
+        <>
+          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin flex-shrink-0" />
+          <span className="font-medium hidden sm:inline">Loading...</span>
+          <span className="font-medium sm:hidden">...</span>
+        </>
+      ) : isSpeaking ? (
         <>
           <VolumeX className="w-3 h-3 sm:w-4 sm:h-4 animate-bounce flex-shrink-0" />
-          <span className="font-medium hidden sm:inline">
-            {'stopListening' in t ? String(t.stopListening) : 'Stop'}
-          </span>
+          <span className="font-medium hidden sm:inline">Stop</span>
           <span className="font-medium sm:hidden">Stop</span>
         </>
       ) : (
