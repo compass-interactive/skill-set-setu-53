@@ -14,6 +14,23 @@ interface SarvamTTSResponse {
   audios: string[]; // Base64 encoded audio
 }
 
+interface SarvamSTTRequest {
+  model: string;
+  language_code: string;
+  with_timestamps: boolean;
+  enable_preprocessing: boolean;
+}
+
+interface SarvamSTTResponse {
+  transcript: string;
+  language_code?: string;
+  timestamps?: Array<{
+    start: number;
+    end: number;
+    text: string;
+  }>;
+}
+
 class SarvamAPIService {
   private apiKey: string;
   private baseUrl = 'https://api.sarvam.ai';
@@ -134,6 +151,176 @@ class SarvamAPIService {
   // Clean up audio URL to prevent memory leaks
   revokeAudioUrl(url: string): void {
     URL.revokeObjectURL(url);
+  }
+
+  // Speech-to-Text functionality
+  async speechToText(audioBlob: Blob, language: string): Promise<string | null> {
+    if (!this.apiKey) {
+      throw new Error('Sarvam API key is not configured');
+    }
+
+    try {
+      const languageCode = this.getLanguageCode(language);
+      console.log(`[Sarvam STT] Language: ${language} -> ${languageCode}`);
+      console.log(`[Sarvam STT] Audio blob size: ${audioBlob.size} bytes, type: ${audioBlob.type}`);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('file', audioBlob, 'audio.wav');
+      formData.append('model', 'saarika:v2.5');
+      formData.append('language_code', languageCode);
+      formData.append('with_timestamps', 'false');
+      formData.append('enable_preprocessing', 'true');
+
+      console.log('[Sarvam STT] Sending request with language:', languageCode);
+
+      const response = await fetch(`${this.baseUrl}/speech-to-text`, {
+        method: 'POST',
+        headers: {
+          'API-Subscription-Key': this.apiKey,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[Sarvam STT] API error:', response.status, response.statusText, errorText);
+        throw new Error(`Sarvam STT API error: ${response.status} - ${errorText}`);
+      }
+
+      const data: SarvamSTTResponse = await response.json();
+      console.log('[Sarvam STT] Response received:', data);
+      
+      return data.transcript || null;
+    } catch (error) {
+      console.error('[Sarvam STT] Error calling Sarvam STT API:', error);
+      throw error;
+    }
+  }
+
+  // Helper method to start recording audio from microphone
+  private mediaRecorder: MediaRecorder | null = null;
+  private recordingStream: MediaStream | null = null;
+  private audioChunks: Blob[] = [];
+
+  async startRecording(): Promise<void> {
+    if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+      return; // Already recording
+    }
+
+    try {
+      this.recordingStream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          sampleRate: 16000,
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true
+        } 
+      });
+      
+      this.mediaRecorder = new MediaRecorder(this.recordingStream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      this.audioChunks = [];
+      
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
+      };
+      
+      this.mediaRecorder.start();
+      console.log('[Sarvam API] Recording started');
+      
+    } catch (error) {
+      throw new Error('Failed to access microphone: ' + error);
+    }
+  }
+
+  async stopRecording(): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      if (!this.mediaRecorder || this.mediaRecorder.state !== 'recording') {
+        reject(new Error('No active recording'));
+        return;
+      }
+
+      this.mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+        
+        // Clean up
+        if (this.recordingStream) {
+          this.recordingStream.getTracks().forEach(track => track.stop());
+          this.recordingStream = null;
+        }
+        this.mediaRecorder = null;
+        this.audioChunks = [];
+        
+        console.log('[Sarvam API] Recording stopped, blob size:', audioBlob.size);
+        resolve(audioBlob);
+      };
+      
+      this.mediaRecorder.onerror = (event) => {
+        // Clean up
+        if (this.recordingStream) {
+          this.recordingStream.getTracks().forEach(track => track.stop());
+          this.recordingStream = null;
+        }
+        this.mediaRecorder = null;
+        reject(new Error('MediaRecorder error: ' + event.error));
+      };
+      
+      this.mediaRecorder.stop();
+    });
+  }
+
+  // Helper method to record audio from microphone (legacy - keeping for backward compatibility)
+  async recordAudio(duration: number = 5000): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          sampleRate: 16000,
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true
+        } 
+      }).then(stream => {
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'audio/webm;codecs=opus'
+        });
+        
+        const audioChunks: Blob[] = [];
+        
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+        
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          stream.getTracks().forEach(track => track.stop());
+          resolve(audioBlob);
+        };
+        
+        mediaRecorder.onerror = (event) => {
+          stream.getTracks().forEach(track => track.stop());
+          reject(new Error('MediaRecorder error: ' + event.error));
+        };
+        
+        mediaRecorder.start();
+        
+        // Stop recording after specified duration
+        setTimeout(() => {
+          if (mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+          }
+        }, duration);
+        
+      }).catch(error => {
+        reject(new Error('Failed to access microphone: ' + error));
+      });
+    });
   }
 }
 

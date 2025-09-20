@@ -254,19 +254,78 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
 
   const handleVoiceToggle = (newRecordingState: boolean) => {
     setIsRecording(newRecordingState);
-    if (newRecordingState) {
-      // TODO: Implement actual voice recording start logic
-      console.log('Starting voice recording');
-    } else {
-      // TODO: Implement actual voice recording stop logic
-      console.log('Stopping voice recording');
+  };
+
+  const handleVoiceTranscript = (transcript: string) => {
+    console.log('[QuizForm] Voice transcript received:', transcript);
+    
+    // Update the current field with the transcript
+    if (currentQuestion.type === 'text') {
+      setFormData(prev => ({
+        ...prev,
+        [currentQuestion.id]: transcript
+      }));
+    } else if (currentQuestion.type === 'select') {
+      // For select fields, try to match transcript with available options
+      const options = currentQuestion.options;
+      if (options) {
+        const transcriptLower = transcript.toLowerCase();
+        
+        // Try exact match first
+        let matchedKey = Object.keys(options).find(key => 
+          options[key].toLowerCase() === transcriptLower ||
+          key.toLowerCase() === transcriptLower
+        );
+        
+        // If no exact match, try partial match
+        if (!matchedKey) {
+          matchedKey = Object.keys(options).find(key => 
+            options[key].toLowerCase().includes(transcriptLower) ||
+            transcriptLower.includes(options[key].toLowerCase()) ||
+            key.toLowerCase().includes(transcriptLower) ||
+            transcriptLower.includes(key.toLowerCase())
+          );
+        }
+        
+        if (matchedKey) {
+          setFormData(prev => ({
+            ...prev,
+            [currentQuestion.id]: matchedKey
+          }));
+        }
+      }
+    } else if (currentQuestion.type === 'multiselect') {
+      // For multiselect, try to match transcript with available options
+      const field = currentQuestion.id as 'skills' | 'interests';
+      const options = currentQuestion.options as string[];
+      
+      const transcriptLower = transcript.toLowerCase();
+      
+      // Simple matching - look for option names in the transcript
+      const matchedOptions = options.filter(option => 
+        transcriptLower.includes(option.toLowerCase()) ||
+        option.toLowerCase().includes(transcriptLower)
+      );
+      
+      if (matchedOptions.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          [field]: [...new Set([...prev[field], ...matchedOptions])]
+        }));
+      }
     }
+    
+    // Stop recording after processing transcript
+    setIsRecording(false);
   };
 
   const VoiceComponent = () => (
     <AIVoice
       isRecording={isRecording}
       onToggle={handleVoiceToggle}
+      onTranscript={handleVoiceTranscript}
+      currentLanguage={currentLanguage}
+      maxRecordingTime={15000} // 15 seconds max
       listenText={('stopRecording' in t ? String(t.stopRecording) : 'Recording your answer...')}
       clickText={`${t.answerWithVoice} for: "${currentQuestion.title}"`}
       className="py-1.5 sm:py-2"
@@ -332,21 +391,24 @@ const QuizForm = ({ currentLanguage, onSubmit, onBack, onLanguageChange }: QuizF
 
       case 'select':
         return (
-          <Select
-            value={value as string}
-            onValueChange={handleInputChange}
-          >
-            <SelectTrigger className="h-12 sm:h-14 text-base sm:text-lg">
-              <SelectValue placeholder={t.selectOption} />
-            </SelectTrigger>
-            <SelectContent>
-              {currentQuestion.options && Object.entries(currentQuestion.options).map(([key, label]) => (
-                <SelectItem key={key} value={key} className="text-base sm:text-lg py-2 sm:py-3">
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="space-y-3 sm:space-y-4">
+            <Select
+              value={value as string}
+              onValueChange={handleInputChange}
+            >
+              <SelectTrigger className="h-12 sm:h-14 text-base sm:text-lg">
+                <SelectValue placeholder={t.selectOption} />
+              </SelectTrigger>
+              <SelectContent>
+                {currentQuestion.options && Object.entries(currentQuestion.options).map(([key, label]) => (
+                  <SelectItem key={key} value={key} className="text-base sm:text-lg py-2 sm:py-3">
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <VoiceComponent />
+          </div>
         );
 
       case 'multiselect':
